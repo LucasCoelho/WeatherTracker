@@ -1,0 +1,11 @@
+//
+//  Config.xcconfig
+//  Weather Tracker
+//
+//  Created by Lucas Coelho on 18/12/24.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+WEATHER_API_KEY = ENTER_YOUR_KEY_HERE
