@@ -7,9 +7,27 @@
 
 import Foundation
 
+
+protocol NetworkSession {
+    func data(from url: URL) async throws -> (Data, URLResponse)
+}
+
+extension NetworkSession {
+    func data(from url: URL) async throws -> (Data, URLResponse) {
+        return try await data(from: url)
+    }
+}
+
+extension URLSession: NetworkSession { }
+
 struct WeatherService {
     private let apiKey = Bundle.main.infoDictionary!["WEATHER_API_KEY"] as! String
     private let baseUrl = "https://api.weatherapi.com/v1/"
+    private let session: NetworkSession
+
+    init(session: NetworkSession = URLSession.shared) {
+        self.session = session
+    }
 
     func search(_ query: String) async throws -> [WeatherInfo] {
         let cities = try await fetchCities(query: query)
@@ -35,7 +53,7 @@ struct WeatherService {
             throw URLError(.badURL)
         }
 
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let (data, response) = try await session.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw URLError(.badServerResponse)
